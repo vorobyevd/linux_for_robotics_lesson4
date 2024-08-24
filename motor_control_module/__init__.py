@@ -1,4 +1,4 @@
 #!/bin/python3
 
-__all__ = ["regulator"]
+__all__ = ["regulator", "filter"]
 from  .regulator import PI_Regulator
