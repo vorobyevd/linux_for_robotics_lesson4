@@ -3,8 +3,8 @@
 # imports
 import numpy as np
 from matplotlib import pyplot as plt
-from motor_control.filter import LowpassFilter
-from motor_control.regulator import PI_Regulator
+from motor_control_module.filter import LowpassFilter
+from motor_control_module.regulator import PI_Regulator
 
 # ************************************* Main application ******************************************
 
