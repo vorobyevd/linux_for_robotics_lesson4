@@ -52,5 +52,3 @@ feedback_filter_params:
     Вывод приложения:
 
     ![Application output](/assets/Output.png)
-
- 
