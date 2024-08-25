@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from motor_control_module.filter import LowpassFilter
 from motor_control_module.regulator import PI_Regulator
 import yaml
-from pprint import pprint
 
 # ************************************* Main application ******************************************
 
@@ -18,8 +17,7 @@ def main():
     with open("config.yaml") as f:
         app_config = yaml.load(f, Loader=yaml.FullLoader)
 
-    pprint(app_config)
-
+    
     # ********** Filter init **********
 
     # Read configuration
