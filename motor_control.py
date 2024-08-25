@@ -5,16 +5,24 @@ import numpy as np
 from matplotlib import pyplot as plt
 from motor_control_module.filter import LowpassFilter
 from motor_control_module.regulator import PI_Regulator
+import yaml
 
 # ************************************* Main application ******************************************
 
 def main():
     
+    # ******* Read configuration ******
+    
+    # Read application configuration from yaml file
+    with open("config.yaml") as f:
+        app_config = yaml.load(f, Loader=yaml.FullLoader)
+
+    
     # ********** Filter init **********
 
-    # Parameters
-    sampling_freq = 100 # sampling frequency Hz
-    pass_freq = 2.5 # bandpass frequency
+    # Read configuration
+    sampling_freq   = app_config['general_params']['sampling_frequency']#100 # sampling frequency Hz
+    pass_freq       = app_config['feedback_filter_params']['pass_frequency']#2.5 # bandpass frequency
 
     # Init
     feedback_filter = LowpassFilter(pass_freq, sampling_freq)
@@ -24,24 +32,28 @@ def main():
 
     # Parameters
 
-    Kp = 5 # proportional gain
-    Ki = 0.03 # integral gain
-    max_action = 48 # max control action
-    min_action = -48 # min control action
+    # Read configuration
+    Kp         = app_config['regulator_params']['Kp'] # 5 # proportional gain
+    Ki         = app_config['regulator_params']['Ki'] # 0.03 # integral gain
+    max_action = app_config['regulator_params']['max_action'] # 48 # max control action
+    min_action = app_config['regulator_params']['min_action'] # -48 # min control action
     
     # Init 
     speed_reg = PI_Regulator(Kp, Ki, min_action, max_action)
 
     # *********** Model init **********
 
-    t_stop = 20 # simulation time
-    t_model = np.linspace(0,t_stop,t_stop*sampling_freq) # time array
-    k = 0.5  # model gain
-    y0 = 0 # initial condition
+    # Read configuration
+    t_stop      = app_config['general_params']['T_stop'] # 20 # simulation time
+    k           = app_config['imitation_model_params']['Gain'] # 0.5  # model gain
+    y0          = app_config['imitation_model_params']['Initial_cond'] # initial condition
+    noise_amp   = app_config['imitation_model_params']['Noise_amplitude']
+    
     y = y0
     dt = 1/sampling_freq # time step
     control = 0 # initial control action
- 
+    t_model     = np.linspace(0,t_stop,t_stop*sampling_freq) # time array
+
     # Simulation data buffers
     y_vals = []
     y_filtered_vals  = []
@@ -67,7 +79,7 @@ def main():
         y = y + dydt*dt            # Integrate 
 
         # Add feedback noize
-        y_noize = 0.01 * np.random.normal()
+        y_noize = noise_amp * np.random.normal()
         y = y + y_noize
 
         #Filter noisy feedback signal
